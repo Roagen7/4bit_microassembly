@@ -26,6 +26,8 @@ struct bus_t {
 
     uint8_t RA, RB, RC, RI, RO;
 
+
+    uint8_t input_microcycle;
     uint8_t selected_cycle;
     uint8_t selected_microcycle;
 };

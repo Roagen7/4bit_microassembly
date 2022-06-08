@@ -23,6 +23,17 @@
     (byte & 0x02 ? '1' : '0'), \
     (byte & 0x01 ? '1' : '0')
 
+#define BYTE_TO_BINARY(byte) \
+    (byte & 0x80 ? '1' : '0'), \
+    (byte & 0x40 ? '1' : '0'), \
+    (byte & 0x20 ? '1' : '0'), \
+    (byte & 0x10 ? '1' : '0'),\
+    (byte & 0x08 ? '1' : '0'), \
+    (byte & 0x04 ? '1' : '0'), \
+    (byte & 0x02 ? '1' : '0'), \
+    (byte & 0x01 ? '1' : '0')
+
+
 
 struct ui_t* ui_init(uint16_t width, uint16_t height){
 
@@ -95,6 +106,7 @@ struct ui_t *ui_render(struct ui_t *ui, struct bus_t *bus) {
     char RI[256] = { 0 };
     char RO[256] = { 0 };
     char S_MICROCYCLE[256] = { 0 };
+    char I_MICROCYCLE[256] = { 0 };
     char S_CYCLE[256] = { 0 };
 
     SPRINTF_REGISTER('A',RA);
@@ -119,7 +131,7 @@ struct ui_t *ui_render(struct ui_t *ui, struct bus_t *bus) {
 
 
     sprintf(S_MICROCYCLE, "%c %c", BIT2_TO_BINARY(bus->selected_microcycle));
-
+    sprintf(I_MICROCYCLE, "%c%c%c %c%c%c %c %c", BYTE_TO_BINARY(bus->input_microcycle));
 
     ui = ui_draw_string(ui,"REGISRS", ui->width * 2 / 3, ui->height/10,3);
     ui = ui_draw_string(ui,"RAM", 0, ui->height/10 - ui->height/20, 3);
@@ -127,11 +139,11 @@ struct ui_t *ui_render(struct ui_t *ui, struct bus_t *bus) {
     ui = ui_draw_string(ui,"MICROCYCLES",ui->width/8,ui->width/10,3);
 
     ui = ui_draw_string(ui, "INS", 0, ui->height /2 + ui->width/10,3);
-    ui = ui_draw_string(ui, "TRA REC ALU", ui->width/8, ui->height/2 + ui->width/10, 3);
 
     ui = ui_draw_string(ui,"K K", 0, ui->height/3 * 2, 3);
     ui = ui_draw_string(ui, "CBA CBA W W", ui->width/8, ui->height/3 * 2, 3);
     ui = ui_draw_string(ui, S_MICROCYCLE, 0, ui->height/3 * 2 + ui->height/20,3 );
+    ui = ui_draw_string(ui, I_MICROCYCLE, ui->width/8, ui->height/3 * 2 + ui->height/20, 3);
 
     for(uint8_t i = 0; i < INSTRUCTIONS/4; i++){
 
@@ -148,9 +160,6 @@ struct ui_t *ui_render(struct ui_t *ui, struct bus_t *bus) {
                 bus->instructions[4 * i + 1],
                 bus->instructions[4 * i + 2],
                 bus->instructions[4 * i + 3]);
-
-
-
 
         ui = ui_draw_string(ui,label,0,posy,3);
         ui = ui_draw_string(ui,data,ui->width/8,posy,3);

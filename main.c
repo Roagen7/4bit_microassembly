@@ -9,9 +9,7 @@ int main() {
 
     struct ui_t* ui = ui_init(WIDTH,HEIGHT);
     struct bus_t* bus = bus_init();
-
-
-
+    bus->input_microcycle = 0xBA;
 
     while (ui->run){
 
