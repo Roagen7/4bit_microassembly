@@ -8,6 +8,9 @@
 #define DRAW_REGISTER(r, y) ui = ui_draw_string(ui,r , 2 * ui->width / 3, y, 3);
 
 
+#define BIT2_TO_BINARY(byte) \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0')
 
 #define BIT3_TO_BINARY(byte) \
   (byte & 0x04 ? '1' : '0'), \
@@ -91,10 +94,11 @@ struct ui_t *ui_render(struct ui_t *ui, struct bus_t *bus) {
     char RC[256] = { 0 };
     char RI[256] = { 0 };
     char RO[256] = { 0 };
-
+    char S_MICROCYCLE[256] = { 0 };
+    char S_CYCLE[256] = { 0 };
 
     SPRINTF_REGISTER('A',RA);
-    DRAW_REGISTER(RA,ui->height/10);
+    DRAW_REGISTER(RA,ui->height/10 + ui->height/20 * 1);
 
     SPRINTF_REGISTER('B',RB);
     DRAW_REGISTER(RB,ui->height/10 + ui->height/20* 2);
@@ -109,11 +113,12 @@ struct ui_t *ui_render(struct ui_t *ui, struct bus_t *bus) {
     DRAW_REGISTER(RO,ui->height/10 + ui->height/20 * 5);
 
 
-    sprintf(RB, "RB %c%c%c%c", BIT4_TO_BINARY(bus->RB));
+//    sprintf(RB, "RB %c%c%c%c", BIT4_TO_BINARY(bus->RB));
 
-    ui = ui_draw_string(ui, RB, 2 * ui->width / 3, ui->height / 10 + ui->height / 20, 3);
+//    ui = ui_draw_string(ui, RB, 2 * ui->width / 3, ui->height / 10 + ui->height / 20, 3);
 
 
+    sprintf(S_MICROCYCLE, "%c %c", BIT2_TO_BINARY(bus->selected_microcycle));
 
 
     ui = ui_draw_string(ui,"REGISRS", ui->width * 2 / 3, ui->height/10,3);
@@ -121,6 +126,12 @@ struct ui_t *ui_render(struct ui_t *ui, struct bus_t *bus) {
     ui = ui_draw_string(ui,"III",0,ui->height/10,3);
     ui = ui_draw_string(ui,"MICROCYCLES",ui->width/8,ui->width/10,3);
 
+    ui = ui_draw_string(ui, "INS", 0, ui->height /2 + ui->width/10,3);
+    ui = ui_draw_string(ui, "TRA REC ALU", ui->width/8, ui->height/2 + ui->width/10, 3);
+
+    ui = ui_draw_string(ui,"K K", 0, ui->height/3 * 2, 3);
+    ui = ui_draw_string(ui, "CBA CBA W W", ui->width/8, ui->height/3 * 2, 3);
+    ui = ui_draw_string(ui, S_MICROCYCLE, 0, ui->height/3 * 2 + ui->height/20,3 );
 
     for(uint8_t i = 0; i < INSTRUCTIONS/4; i++){
 
